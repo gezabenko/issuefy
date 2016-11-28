@@ -46,6 +46,8 @@ class IssuefyController < ApplicationController
         flash[:error] = l(:issuefy_error_parent, :name => e.message)
       rescue IssuefyErrorValue => e
         flash[:error] = l(:issuefy_error_value, :value => e.message)
+      rescue IssuefyErrorDate => e
+        flash[:error] = l(:issuefy_error_date, :value => e.message)
       rescue Exception => e
         flash[:error] = l(:issuefy_error_something, :message => e.message)
       end

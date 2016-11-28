@@ -30,16 +30,10 @@ end
 class IssuefyErrorParent < Exception
 end
 
-module Issuefy
+class IssuefyErrorDate < Exception
+end
 
-  TRACKER = 0
-  ASSIGNED = 1
-  SUBJECT = 2
-  DESC = 3
-  START = 4
-  DUE = 5
-  ESTIMATED = 6
-  PARENT = 7
+module Issuefy
 
   def self.parse_parent(cell)
     return nil if cell.nil?
@@ -79,7 +73,16 @@ module Issuefy
     Float(cell) rescue raise IssuefyErrorValue, cell
   end
 
-  def self.parse_file(file, project, user)
+  def self.parse_issue_file(file, project, user)
+    TRACKER = 0
+    ASSIGNED = 1
+    SUBJECT = 2
+    DESC = 3
+    START = 4
+    DUE = 5
+    ESTIMATED = 6
+    PARENT = 7
+
     book = Spreadsheet.open(file.path)
     sheet = book.worksheet(0)
     count = 0
@@ -110,6 +113,38 @@ module Issuefy
       end
     end
 
+    def self.parse_time_file(file, project, user)
+      ISSUE = 0
+      DATE = 1
+      HOUR = 2
+      COMMENT = 3
+
+      book = Spreadsheet.open(file.path)
+      sheet = book.worksheet(0)
+      count = 0
+
+      TimeEntry.where(:project_id => project).transaction do
+        sheet.each do |row|
+          # the next items MUST be presents
+          issue_id = parse_number(row[ISSUE])
+          next if issue_id.nil?
+          spent_on = parse_date(row[DATE])
+          next if spent_on.nil?
+          hours = parse_number(row[HOUR])
+          next if hours.nil?
+
+          time_entry = TimeEntry.new
+          time_entry.user = User.current
+          time_entry.issue_id = issue_id
+          time_entry.spent_on = spent_on
+          time_entry.hours = hours
+          time_entry.comments = parse_text(row[COMMENT])
+          time_entry.save!
+
+          count += 1
+      end
+    end
+    
     count
   end
 

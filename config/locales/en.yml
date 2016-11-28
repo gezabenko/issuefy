@@ -30,3 +30,5 @@ en:
   issuefy_error_value: "Value \"%{value}\" is not valid"
   issuefy_notice: "%{count} issues have been created"
   permission_issuefy: "Issuefy"
+  timefy_desc: "Timefy Spreadsheet"
+  timefy_action: "Timefy"

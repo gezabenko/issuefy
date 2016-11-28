@@ -1,8 +1,19 @@
 <h2><%= l(:issuefy_title) %></h2>
 
-<p class="subtitle"> <%= l(:issuefy_desc) %> </p>
+<fieldset>
+  <p class="subtitle"> <%= l(:issuefy_desc) %> </p>
 
-<%= form_for :file_upload, :html => {:multipart => true} do |f| %>
-  <%= f.file_field :my_file %>
-  <%= f.submit l(:issuefy_action) %>
-<% end %>
+  <%= form_for :file_upload, :html => {:multipart => true} do |f| %>
+    <%= f.file_field :my_file %>
+    <%= f.submit l(:issuefy_action) %>
+  <% end %>
+</fieldset>
+
+<fieldset>
+  <p class="subtitle"> <%= l(:timefy_desc) %> </p>
+
+  <%= form_for :file_upload, :html => {:multipart => true} do |f| %>
+    <%= f.file_field :my_file %>
+    <%= f.submit l(:timefy_action) %>
+  <% end %>
+</fieldset>
