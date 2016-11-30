@@ -1,0 +1,37 @@
+# Copyright (c) 2013 Martin Abente Lahaye. - martin.abente.lahaye@gmail.com
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA
+#
+
+hu:
+  issuefy: "Issuefy"
+  issuefy_title: "Issuefy Spreadsheet"
+  issuefy_desc: "Feladatok és Ráfordított idő létrehozása táblázatból."
+  issuefy_action: "Issuefy"
+  issuefy_error_not_found: "Nincs fájl megadva."
+  issuefy_error_wrong_format: "Rossz a fájl formátuma."
+  issuefy_error_something: "Valami elromlott: %{message}."
+  issuefy_error_user: "Nem található \"%{name}\" felhasználó."
+  issuefy_error_tracker: "Nem található \"%{name}\" tracker."
+  issuefy_error_issue: "Nem található \"%{value}\" feladat."
+  issuefy_error_issue_empty: "A feladat számának mezeje, kötelezően kitöltendő."
+  issuefy_error_parent: "Nem található \"%{name}\" szülőfeladat."
+  issuefy_error_activity: "Nemtalálható \"%{name}\" aktivítás."
+  issuefy_error_date: "A dátum \"%{value}\" nem megfelelő formátumú (dd/mm/YYYY)."
+  issuefy_error_hour: "Az óra \"%{value}\" nem megfelelő formátumú."
+  issuefy_error_value: "Az érték \"%{value}\" nem megfelelő."
+  issuefy_notice: "%{count} elem létrehozva."
+  permission_issuefy: "Issuefy"

@@ -30,7 +30,19 @@ end
 class IssuefyErrorParent < Exception
 end
 
+class IssuefyErrorIssue < Exception
+end
+
+class IssuefyErrorIssueEmpty < Exception
+end
+
+class IssuefyErrorActivity < Exception
+end
+
 class IssuefyErrorDate < Exception
+end
+
+class IssuefyErrorHour < Exception
 end
 
 module Issuefy
@@ -40,6 +52,13 @@ module Issuefy
     parent = Issue.find_by_id(cell) || Issue.find_by_subject(cell)
     raise IssuefyErrorParent, cell if parent.nil?
     parent.id
+  end
+
+  def self.parse_issue(cell)
+    raise IssuefyErrorIssueEmpty, cell if cell.nil?
+    issue = Issue.find_by_id(cell)
+    raise IssuefyErrorIssue, cell if issue.nil?
+    issue.id
   end
 
   def self.parse_tracker(cell)
@@ -57,9 +76,16 @@ module Issuefy
     user || group
   end
 
+  def self.parse_activity(cell)
+    cell = TimeEntryActivity.first.name if cell.nil?
+    activity_id = TimeEntryActivity.find_by_name(cell) 
+    raise IssuefyErrorActivity, cell if activity_id.nil?
+    activity_id
+  end
+
   def self.parse_date(cell)
     return nil if cell.nil?
-    return DateTime.strptime(cell.strip, "%d/%m/%Y") rescue raise IssuefyErrorValue, cell if cell.class == String
+    return DateTime.strptime(cell.strip, "%d/%m/%Y") rescue raise IssuefyErrorDate, cell if cell.class == String
     cell
   end
 
@@ -73,79 +99,77 @@ module Issuefy
     Float(cell) rescue raise IssuefyErrorValue, cell
   end
 
-  def self.parse_issue_file(file, project, user)
-    TRACKER = 0
-    ASSIGNED = 1
-    SUBJECT = 2
-    DESC = 3
-    START = 4
-    DUE = 5
-    ESTIMATED = 6
-    PARENT = 7
+  def self.parse_file(file, project, user, file_type)
 
     book = Spreadsheet.open(file.path)
     sheet = book.worksheet(0)
     count = 0
 
-    Issue.where(:project_id => project).transaction do
-      sheet.each do |row|
-
-        # subject MUST be present
-        subject = parse_text(row[SUBJECT])
-        next if subject.nil?
-
-        issue = Issue.find_by_subject(subject) || Issue.new
-
-        issue.project = project
-        issue.author = user
-        issue.subject = subject
-        issue.tracker = parse_tracker(row[TRACKER])
-        issue.assigned_to = parse_user_or_group(row[ASSIGNED])
-        issue.description = parse_text(row[DESC])
-        issue.start_date = parse_date(row[START])
-        issue.due_date = parse_date(row[DUE])
-        issue.estimated_hours = parse_number(row[ESTIMATED])
-        issue.parent_issue_id = parse_parent(row[PARENT])
-
-        issue.save!
-
-        count += 1
+    if file_type == "issues"
+      # TRACKER = 0
+      # ASSIGNED = 1
+      # SUBJECT = 2
+      # DESC = 3
+      # START = 4
+      # DUE = 5
+      # ESTIMATED = 6
+      # PARENT = 7
+         
+      Issue.where(:project_id => project).transaction do
+        sheet.each do |row|
+  
+          # subject MUST be present
+          subject = parse_text(row[2])
+          next if subject.nil?
+  
+          issue = Issue.find_by_subject(subject) || Issue.new
+  
+          issue.project = project
+          issue.author = user
+          issue.subject = subject
+          issue.tracker = parse_tracker(row[0])
+          issue.assigned_to = parse_user_or_group(row[1])
+          issue.description = parse_text(row[3])
+          issue.start_date = parse_date(row[4])
+          issue.due_date = parse_date(row[5])
+          issue.estimated_hours = parse_number(row[6])
+          issue.parent_issue_id = parse_parent(row[7])
+  
+          issue.save!
+  
+          count += 1
+        end
       end
-    end
+      count
 
-    def self.parse_time_file(file, project, user)
-      ISSUE = 0
-      DATE = 1
-      HOUR = 2
-      COMMENT = 3
-
-      book = Spreadsheet.open(file.path)
-      sheet = book.worksheet(0)
-      count = 0
-
+    else
+      # ISSUE = 0
+      # DATE = 1
+      # HOUR = 2
+      # ACTIVITY = 3
+      # COMMENT = 4
+  
       TimeEntry.where(:project_id => project).transaction do
         sheet.each do |row|
           # the next items MUST be presents
-          issue_id = parse_number(row[ISSUE])
-          next if issue_id.nil?
-          spent_on = parse_date(row[DATE])
-          next if spent_on.nil?
-          hours = parse_number(row[HOUR])
-          next if hours.nil?
+          #issue_id = parse_issue(row[0])
+          #next if issue_id.nil?
 
           time_entry = TimeEntry.new
-          time_entry.user = User.current
-          time_entry.issue_id = issue_id
-          time_entry.spent_on = spent_on
-          time_entry.hours = hours
-          time_entry.comments = parse_text(row[COMMENT])
+          time_entry.user = user
+          time_entry.issue_id = parse_issue(row[0])
+          time_entry.spent_on = parse_date(row[1])
+          time_entry.hours = parse_number(row[2])
+          time_entry.activity = parse_activity(row[3])
+          time_entry.comments = parse_text(row[4])
           time_entry.save!
-
+  
           count += 1
+        end
       end
+      count
+
     end
-    
-    count
   end
 
 end

@@ -14,7 +14,8 @@ issuefy is a redmine plugin for creating issues or time entries from a spreadshe
 ## Usage
 
 0. Assign the _"issuefy"_ permission to the roles you seem fit.
-1. Users with the corresponding roles will see the _"issuefy"_ tab in projects view.
+1. Enable Issuefy module in project settings.
+2. Users with the corresponding roles will see the _"issuefy"_ tab in projects view.
 
 ## Spreadsheet format
 
@@ -34,14 +35,15 @@ issuefy is a redmine plugin for creating issues or time entries from a spreadshe
 0. Issue number (**mandatory**)
 1. Date (**mandatory**): _dd/mm/yyyy_
 2. Hours (**mandatory**)
-3. Comment
+3. Activity (if this empty than use default)
+4. Comment
 
 check the `example/issuefy-book.xls` and `example/timefy-book.xls` for more details about the format.
 
 ## Features
 
 * create or update issues or time entries in your project, from a spreadsheet.
-* english, spanish, german, french and simplified chinese locales.
+* english, spanish, german, french, simplified chinese and hungarian locales.
 * support for redmine 2.3.x and 2.4.x.
 
 ## Important notes
@@ -61,5 +63,5 @@ check the `example/issuefy-book.xls` and `example/timefy-book.xls` for more deta
 - [X] load spreadsheet gem properly
 - [X] redirect pages properly
 - [ ] write tests
-- [ ] activity
+- [X] activity
 - [ ] other person behalf 

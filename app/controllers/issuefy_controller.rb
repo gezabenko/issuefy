@@ -32,9 +32,10 @@ class IssuefyController < ApplicationController
       flash[:error] = l(:issuefy_error_not_found)
     else
       file = params[:file_upload][:my_file].tempfile
+      file_type = params[:file_type]
 
       begin
-        count = Issuefy::parse_file(file, @project, User.current)
+        count = Issuefy::parse_file(file, @project, User.current, file_type)
         return redirect_to project_issues_path(@project), :notice => l(:issuefy_notice, count)
       rescue Ole::Storage::FormatError
         flash[:error] = l(:issuefy_error_wrong_format)
@@ -44,10 +45,18 @@ class IssuefyController < ApplicationController
         flash[:error] = l(:issuefy_error_user, :name => e.message)
       rescue IssuefyErrorParent => e
         flash[:error] = l(:issuefy_error_parent, :name => e.message)
+      rescue IssuefyErrorIssue => e
+        flash[:error] = l(:issuefy_error_issue, :value => e.message)
+      rescue IssuefyErrorIssueEmpty => e
+        flash[:error] = l(:issuefy_error_issue_empty, :value => e.message)
+      rescue IssuefyErrorActivity => e
+        flash[:error] = l(:issuefy_error_activity, :name => e.message)
       rescue IssuefyErrorValue => e
         flash[:error] = l(:issuefy_error_value, :value => e.message)
       rescue IssuefyErrorDate => e
         flash[:error] = l(:issuefy_error_date, :value => e.message)
+      rescue IssuefyErrorHour => e
+        flash[:error] = l(:issuefy_error_hour, :value => e.message)
       rescue Exception => e
         flash[:error] = l(:issuefy_error_something, :message => e.message)
       end
@@ -55,4 +64,6 @@ class IssuefyController < ApplicationController
 
     redirect_to :action => :index
   end
+
 end
+
