@@ -134,6 +134,7 @@ module Issuefy
           issue.due_date = parse_date(row[5])
           issue.estimated_hours = parse_number(row[6])
           issue.parent_issue_id = parse_parent(row[7])
+          issue.status_id = '1'
   
           issue.save!
   

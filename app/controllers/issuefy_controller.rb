@@ -32,7 +32,7 @@ class IssuefyController < ApplicationController
       flash[:error] = l(:issuefy_error_not_found)
     else
       file = params[:file_upload][:my_file].tempfile
-      file_type = params[:file_type]
+      file_type = params[:issuefy_file_type]
 
       begin
         count = Issuefy::parse_file(file, @project, User.current, file_type)
